@@ -1,12 +1,16 @@
-from customtkinter import *
+from Views.ContentView import *
 
 USER = "tester"
 PASSWORD = "12345"
 
 
 class LoginView(CTkFrame):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, controller, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+
+        self.controller = controller
+
+        self.configure(fg_color="transparent")
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -39,9 +43,9 @@ class LoginEntries(CTkFrame):
     def loginCommand(self, event=None):
         if self.loginEntry.get() == USER and self.passwordEntry.get() == PASSWORD:
             print("pass")
+            self.master.controller.show_view(ContentView)
         else:
             print("not pass")
 
     def selectNext(self, event=None):
         self.passwordEntry.focus_set()
-
