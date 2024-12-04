@@ -13,13 +13,15 @@ class LoginView(CTkFrame):
         self.configure(fg_color="transparent")
 
         self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(2, weight=1)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=3)
 
         self.welcome = CTkLabel(self, text="Добро пожаловать!", font=("arial", 30))
-        self.welcome.grid(row=0, column=0, pady=100)
+        self.welcome.grid(row=0, column=1, pady=100)
 
         self.entries = LoginEntries(self)
-        self.entries.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        self.entries.grid(row=1, column=1, padx=10, pady=10, sticky="new")
 
 
 class LoginEntries(CTkFrame):
@@ -36,6 +38,9 @@ class LoginEntries(CTkFrame):
 
         self.button = CTkButton(self, text="Войти", command=self.loginButtonAction)
         self.button.grid(row=2, column=0, padx=10, pady=10, sticky="")
+
+        self.loginEntry.insert(0, USER)
+        self.passwordEntry.insert(0, PASSWORD)
 
     def loginButtonAction(self):
         self.loginCommand()
