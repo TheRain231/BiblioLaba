@@ -1,5 +1,7 @@
-from Views.LoginView import *
 import tkinter as tk
+
+from Views.LoginView import *
+
 
 class BiblioLabaApp(CTk):
     def __init__(self):
