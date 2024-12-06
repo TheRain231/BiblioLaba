@@ -17,8 +17,8 @@ class BiblioLabaApp(CTk):
 
         self.current_view = None
 
-        self.show_view(LoginView)
-        # self.show_view(ContentView)
+        # self.show_view(LoginView)
+        self.show_view(ContentView)
 
     def show_view(self, view_class):
         if self.current_view is not None:
