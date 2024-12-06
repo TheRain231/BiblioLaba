@@ -9,7 +9,7 @@ try:
     )
     connection.autocommit = True
 
-    # the cursor for performing databse operations
+    # the cursor for performing database operations
 
     # cursor = connection.cursor()
 
@@ -20,7 +20,7 @@ try:
             id serial PRIMARY KEY,
             first_name varchar(50) NOT NULL,
             nick_name varchar(50) NOT NULL);
-"""
+            """
         )
         print("[INFO] Table created successfully")
 
@@ -29,4 +29,4 @@ except Exception as _ex:
 finally:
     if connection:
         connection.close()
-        print("[INFO] PoasgreSQL connection closed")
+        print("[INFO] PostgreSQL connection closed")
