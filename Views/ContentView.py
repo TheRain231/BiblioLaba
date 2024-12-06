@@ -46,7 +46,7 @@ class SearchBar(CTkFrame):
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=1)
 
-        magnifyingGlassImage = CTkImage(Image.open("magnifyingglass.png"),
+        magnifyingGlassImage = CTkImage(Image.open("Assets/magnifyingglass.png"),
                                         size=(23, 23))
         magnifyingGlass = CTkLabel(master=self,
                                    text="",
