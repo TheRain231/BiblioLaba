@@ -33,37 +33,36 @@ def CreateTables():
         conn.autocommit = True
         cur = conn.cursor()
         clinetTable = """
-        CREATE TABLE Client (
+        CREATE TABLE IF NOT EXISTS Client (
     client_id SERIAL PRIMARY KEY,
     login VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL
 );
         """
         genreTable = """
-            CREATE TABLE Genre (
+            CREATE TABLE IF NOT EXISTS Genre (
     genre_id SERIAL PRIMARY KEY,
     genre VARCHAR(255) UNIQUE NOT NULL
 );
         """
 
         authorTable = """
-        CREATE TABLE Author (
+        CREATE TABLE IF NOT EXISTS Author (
     author_id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    surname VARCHAR(255) NOT NULL,
-    ns VARCHAR(510) UNIQUE NOT NULL
+    surname VARCHAR(255) NOT NULL
 );
         """
 
         publishingHouseTable = """
-        CREATE TABLE PublishingHouse (
+        CREATE TABLE IF NOT EXISTS PublishingHouse (
     publishing_house_id SERIAL PRIMARY KEY,
     label VARCHAR(255) UNIQUE NOT NULL
 );
         """
 
         bookTable = """
-        CREATE TABLE Book (
+        CREATE TABLE IF NOT EXISTS Book (
     book_id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     image VARCHAR(255),
@@ -72,7 +71,7 @@ def CreateTables():
     genre_id INT REFERENCES Genre(genre_id),
     publishing_house_id INT REFERENCES PublishingHouse(publishing_house_id),
     client_id INT REFERENCES Client(client_id),
-    amount INT
+    count INT
 );
         """
         queries = [
@@ -141,9 +140,103 @@ BEGIN
 END;
 
 $$ LANGUAGE plpgsql;"""
+
+        getAuthorId = """
+        CREATE OR REPLACE FUNCTION get_author_id(name1 VARCHAR, surname1 VARCHAR)
+RETURNS INT AS
+
+$$
+DECLARE
+    v_author_id INT;
+BEGIN
+    SELECT a.author_id INTO v_author_id
+    FROM Author a
+    WHERE a.name = name1
+      AND a.surname = surname1;
+
+    IF FOUND THEN
+        RETURN v_author_id;
+    ELSE
+        RETURN -1;
+    END IF;
+END;
+
+$$ LANGUAGE plpgsql;
+        """
+
+        getPublishingHouseId = """
+        CREATE OR REPLACE FUNCTION get_publishing_house_id(label1 VARCHAR)
+RETURNS INT AS
+
+$$
+DECLARE
+    v_publishing_house_id INT;
+BEGIN
+    SELECT p.publishing_house_id INTO v_publishing_house_id
+    FROM PublishingHouse p
+    WHERE p.label = label1;
+
+    IF FOUND THEN
+        RETURN v_publishing_house_id;
+    ELSE
+        RETURN -1;
+    END IF;
+END;
+
+$$ LANGUAGE plpgsql;
+        """
+
+        getGenreId = """
+        CREATE OR REPLACE FUNCTION get_genre_id(genre1 VARCHAR)
+RETURNS INT AS
+
+$$
+DECLARE
+    v_genre_id INT;
+BEGIN
+    SELECT g.genre_id INTO v_genre_id
+    FROM Genre g
+    WHERE g.genre = genre1;
+
+    IF FOUND THEN
+        RETURN v_genre_id;
+    ELSE
+        RETURN -1;
+    END IF;
+END;
+
+$$ LANGUAGE plpgsql;
+        """
+
+        getClientId = """
+        CREATE OR REPLACE FUNCTION get_client_id(login1 VARCHAR)
+RETURNS INT AS
+
+$$
+DECLARE
+    v_client_id INT;
+BEGIN
+    SELECT c.client_id INTO v_client_id
+    FROM Client c
+    WHERE c.login = login1;
+
+    IF FOUND THEN
+        RETURN v_client_id;
+    ELSE
+        RETURN -1;
+    END IF;
+END;
+
+$$ LANGUAGE plpgsql;
+        """
+
         queries = [
             insertFunc,
-            decreaseCountFunc
+            decreaseCountFunc,
+            getAuthorId,
+            getPublishingHouseId,
+            getGenreId,
+            getClientId
                    ]
         for query in queries:
             try:
@@ -223,38 +316,67 @@ def InsertNewBook(title: str, authorName: str, authorSurName: str, image: str, d
         cur = conn.cursor()
         conn.autocommit = True
         #todo: Переписать в разные функции, которые будут возвращать id каждого
-        query = f"""
-                WITH inserted_author AS (
-    INSERT INTO Author (name, surname, ns)
-    VALUES ('{authorName}', '{authorSurName}', '{authorName+authorSurName}')
-    RETURNING author_id
-), inserted_genre AS (
-    INSERT INTO Genre (genre)
-    VALUES ('{genre}')
-    RETURNING genre_id
-), inserted_client AS (
-    INSERT INTO Client (login, password)
-    VALUES ('{clientLogin}', '{clientPassword}')
-    RETURNING client_id
-),
-inserted_publishing_house AS (
-    INSERT INTO PublishingHouse (label)
-    VALUES ('{publishngHouseLabel}')
-    RETURNING publishing_house_id
-)
-INSERT INTO Book (title, image, description, author_id, genre_id, publishing_house_id, client_id, amount)
-VALUES (
+
+        authorId = f"""
+        SELECT get_author_id('{authorName}', '{authorSurName}');
+"""
+        cur.execute(authorId)
+        author_id = cur.fetchall()[0][0]
+        if (author_id == -1):
+            newAuthorId = f"""
+            INSERT INTO author(name, surname)
+            VALUES('{authorName}', '{authorSurName}');
+"""
+            cur.execute(newAuthorId)
+            cur.execute(authorId)
+            author_id = cur.fetchall()[0][0]
+
+
+
+
+        genreId = f"""
+        SELECT get_genre_id('{genre}');
+        
+"""
+        cur.execute(genreId)
+        genre_id = cur.fetchall()[0][0]
+
+        if (genre_id == -1):
+            newGenreId = f"""
+                    INSERT INTO Genre(genre)
+                    VALUES('{genre}');
+        """
+            cur.execute(newGenreId)
+            cur.execute(genreId)
+            genre_id = cur.fetchall()[0][0]
+
+        publishngHouseId = f"""
+        SELECT get_publishing_house_id('{publishngHouseLabel}');
+"""
+        cur.execute(publishngHouseId)
+        publishngHouse_id = cur.fetchall()[0][0]
+
+        clientId = f"""
+        SELECT get_client_id('{clientLogin}');
+"""
+
+        cur.execute(clientId)
+        client_id = cur.fetchall()[0][0]
+        print(author_id, genre_id, publishngHouse_id, client_id)
+        GeneralQuery = f"""
+        INSERT INTO Book (title, image, description, author_id, genre_id, publishing_house_id, client_id, count)
+        VALUES (
     '{title}',
     '{image}',
     '{description}',
-    (SELECT author_id FROM inserted_author),
-    (SELECT genre_id FROM inserted_genre),
-    (SELECT publishing_house_id FROM inserted_publishing_house),
-    (SELECT client_id FROM inserted_client),
+    '{author_id}',
+    '{genre_id}',
+    '{publishngHouse_id}',
+    '{client_id}',
     '{count}'
 );
+
 """
-        cur.execute(query)
     except Exception as e:
         print(f"Произошла ошибка при Добавлении элеента: {e}")
 
@@ -262,6 +384,8 @@ VALUES (
         cur.close()
 
         conn.close()
+
+
 
 def DecreaseCount(title:str, authorName:str, authorSurName:str):
     try:
