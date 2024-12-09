@@ -34,4 +34,5 @@ class BiblioLabaApp(CTk):
         sql.CreateFuncs()
         sql.CreateTriggers()
         sql.InsertNewBook("LOL", "artem", "antonov", "hhtp", "qeweqweqeqwe", "lolol", "st.P", "1", "2", 12)
+        sql.InsertNewBook("LOL", "artem", "antonov", "hhtp", "qeweqweqeqwe", "lolol", "st.P", "1", "2", 12)
         self.mainloop()

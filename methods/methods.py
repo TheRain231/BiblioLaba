@@ -355,13 +355,30 @@ def InsertNewBook(title: str, authorName: str, authorSurName: str, image: str, d
 """
         cur.execute(publishngHouseId)
         publishngHouse_id = cur.fetchall()[0][0]
+        if (publishngHouse_id == -1):
+            newPublishngHouseId = f"""
+                    INSERT INTO publishinghouse(label)
+                    VALUES('{publishngHouseLabel}');
+        """
+            cur.execute(newPublishngHouseId)
+            cur.execute(publishngHouseId)
+            publishngHouse_id = cur.fetchall()[0][0]
 
         clientId = f"""
         SELECT get_client_id('{clientLogin}');
 """
-
         cur.execute(clientId)
         client_id = cur.fetchall()[0][0]
+
+        if (client_id == -1):
+            newClientId = f"""
+                    INSERT INTO client(login, password)
+                    VALUES('{clientLogin}', '{clientPassword}');
+        """
+            cur.execute(newClientId)
+            cur.execute(clientId)
+            client_id = cur.fetchall()[0][0]
+
         print(author_id, genre_id, publishngHouse_id, client_id)
         GeneralQuery = f"""
         INSERT INTO Book (title, image, description, author_id, genre_id, publishing_house_id, client_id, count)
@@ -375,8 +392,8 @@ def InsertNewBook(title: str, authorName: str, authorSurName: str, image: str, d
     '{client_id}',
     '{count}'
 );
-
 """
+        cur.execute(GeneralQuery)
     except Exception as e:
         print(f"Произошла ошибка при Добавлении элеента: {e}")
 
