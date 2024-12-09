@@ -91,8 +91,8 @@ class SidePanel(CTkFrame):
 
         settingsImage = CTkImage(Image.open("Assets/settings.png"),
                                  size=(23, 23))
-        self.settings = CTkButton(self, text="Настройки", image=settingsImage)
-        self.settings.configure(fg_color="transparent", hover_color="#333")
+        self.settings = CTkButton(self, text="Настройки", image=settingsImage, text_color=("black", "white"))
+        self.settings.configure(fg_color="transparent", hover_color=("#cfcfcf", "#333"))
         self.settings.grid(padx=10, pady=5, sticky="ew")
 
 
