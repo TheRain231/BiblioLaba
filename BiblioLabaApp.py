@@ -2,6 +2,7 @@ import tkinter as tk
 
 from Views.LoginView import *
 
+import methods.methods as sql
 
 class BiblioLabaApp(CTk):
     def __init__(self):
@@ -28,4 +29,9 @@ class BiblioLabaApp(CTk):
         self.current_view.pack(fill="both", expand=True)
 
     def loop(self):
+        # sql.CreateDB()
+        # sql.CreateTables()
+        # sql.CreateFuncs()
+        # sql.CreateTriggers()
+        sql.InsertNewBook("LOL", "artem", "antonov", "hhtp", "qeweqweqeqwe", "lolol", "st.P", "1", "2", 12)
         self.mainloop()
