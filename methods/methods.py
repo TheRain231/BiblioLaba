@@ -129,14 +129,14 @@ END;
 $$ LANGUAGE plpgsql;
         """
         decreaseCountFunc = """
-        CREATE OR REPLACE FUNCTION decrease_count(book_id INTEGER)
+        CREATE OR REPLACE FUNCTION decrease_count(book_id1 INTEGER)
 RETURNS VOID AS
 
 $$
 BEGIN
     UPDATE Book
     SET count = CASE WHEN count > 0 THEN count - 1 ELSE 0 END
-    WHERE book_id = decrease_count.book_id;
+    WHERE book_id = decrease_count.book_id1;
 END;
 
 $$ LANGUAGE plpgsql;"""
@@ -315,7 +315,6 @@ def InsertNewBook(title: str, authorName: str, authorSurName: str, image: str, d
 
         cur = conn.cursor()
         conn.autocommit = True
-        #todo: Переписать в разные функции, которые будут возвращать id каждого
 
         authorId = f"""
         SELECT get_author_id('{authorName}', '{authorSurName}');
@@ -404,13 +403,79 @@ def InsertNewBook(title: str, authorName: str, authorSurName: str, image: str, d
 
 
 
-def DecreaseCount(title:str, authorName:str, authorSurName:str):
+def DecreaseCount(title: str, authorName: str, authorSurName: str, image: str, description: str, genre: str, publishngHouseLabel: str, clientLogin:str, clientPassword:str, count: int = 0):
     try:
         conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
         conn.autocommit = True
         cur = conn.cursor()
-        #todo: Запрос на уменьшение книги(функция)
-        query = f""""""
+        authorId = f"""
+                SELECT get_author_id('{authorName}', '{authorSurName}');
+        """
+        cur.execute(authorId)
+        author_id = cur.fetchall()[0][0]
+        if (author_id == -1):
+            newAuthorId = f"""
+                    INSERT INTO author(name, surname)
+                    VALUES('{authorName}', '{authorSurName}');
+        """
+            cur.execute(newAuthorId)
+            cur.execute(authorId)
+            author_id = cur.fetchall()[0][0]
+
+        genreId = f"""
+                SELECT get_genre_id('{genre}');
+
+        """
+        cur.execute(genreId)
+        genre_id = cur.fetchall()[0][0]
+
+        if (genre_id == -1):
+            newGenreId = f"""
+                            INSERT INTO Genre(genre)
+                            VALUES('{genre}');
+                """
+            cur.execute(newGenreId)
+            cur.execute(genreId)
+            genre_id = cur.fetchall()[0][0]
+
+        publishngHouseId = f"""
+                SELECT get_publishing_house_id('{publishngHouseLabel}');
+        """
+        cur.execute(publishngHouseId)
+        publishngHouse_id = cur.fetchall()[0][0]
+        if (publishngHouse_id == -1):
+            newPublishngHouseId = f"""
+                            INSERT INTO publishinghouse(label)
+                            VALUES('{publishngHouseLabel}');
+                """
+            cur.execute(newPublishngHouseId)
+            cur.execute(publishngHouseId)
+            publishngHouse_id = cur.fetchall()[0][0]
+
+        clientId = f"""
+                SELECT get_client_id('{clientLogin}');
+        """
+        cur.execute(clientId)
+        client_id = cur.fetchall()[0][0]
+
+        if (client_id == -1):
+            newClientId = f"""
+                            INSERT INTO client(login, password)
+                            VALUES('{clientLogin}', '{clientPassword}');
+                """
+            cur.execute(newClientId)
+            cur.execute(clientId)
+            client_id = cur.fetchall()[0][0]
+
+        query = f"""
+        SELECT book_id from Book where author_id = '{author_id}' AND publishing_house_id = '{publishngHouse_id}' AND title = '{title}' AND genre_id = '{genre_id}' AND client_id = '{client_id}' AND description = '{description}';
+"""
+        cur.execute(query)
+        book_id = cur.fetchall()[0][0]
+
+        query = f"""
+        SELECT decrease_count('{book_id}');
+"""
         cur.execute(query)
     except Exception as e:
         print(f"Произошла ошибка при Добавлении элеента: {e}")
