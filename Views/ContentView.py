@@ -1,4 +1,4 @@
-from customtkinter import *
+from Views.SettingsView import *
 from PIL import Image
 
 
@@ -14,16 +14,18 @@ class ContentView(CTkFrame):
         self.grid_columnconfigure(1, weight=30)
         self.grid_rowconfigure(0, weight=1)
 
-        self.sidePanel = SidePanel(self)
+        self.sidePanel = SidePanel(self, controller)
         self.sidePanel.grid(row=0, column=0, sticky="nsew")
 
-        self.mainPage = MainPage(self)
+        self.mainPage = MainPage(self, controller)
         self.mainPage.grid(row=0, column=1, sticky="nsew")
 
 
 class MainPage(CTkFrame):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, controller, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+
+        self.controller = controller
 
         self.configure(fg_color="transparent")
 
@@ -33,12 +35,20 @@ class MainPage(CTkFrame):
         self.grid_rowconfigure(1, weight=30)
         self.grid_rowconfigure(2, weight=0)
 
-        BookImage = CTkImage(Image.open("Assets/mockCover.png"),
+        bookImage = CTkImage(Image.open("Assets/mockCover.png"),
                              size=(150, 200))
-        self.BookCover = CTkLabel(master=self,
+        self.bookCover = CTkLabel(master=self,
                                   text="",
-                                  image=BookImage)
-        self.BookCover.grid(row=0, column=0, padx=25, pady=25, sticky="nw")
+                                  image=bookImage)
+        self.bookCover.grid(row=0, column=0, padx=25, pady=25, sticky="nw")
+
+        plusImage = CTkImage(Image.open("Assets/plus.png"),
+                             size=(23, 23))
+        self.plusButton = CTkButton(self, text="", image=plusImage, width=30,
+                                    text_color=("black", "white"),
+                                    fg_color="transparent", hover_color=("#cfcfcf", "#222"),
+                                    command=self.open_append_window)
+        self.plusButton.grid(row=0, column=1, padx=10, pady=10, sticky="ne")
 
         self.titleLabels = TitleLabels(self)
         self.titleLabels.grid(row=0, column=1, padx=0, pady=0, sticky="w")
@@ -48,6 +58,10 @@ class MainPage(CTkFrame):
 
         self.bookButton = CTkButton(master=self, text="Забронировать")
         self.bookButton.grid(row=2, column=0, columnspan=2, pady=10)
+
+    def open_append_window(self):
+        self.controller.open_toplevel(SettingsToplevelWindow)
+
 
 class TitleLabels(CTkFrame):
     def __init__(self, master, *args, **kwargs):
@@ -68,9 +82,10 @@ class TitleLabels(CTkFrame):
 
 
 class SidePanel(CTkFrame):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, controller, **kwargs):
         super().__init__(master, **kwargs)
 
+        self.controller = controller
         self.configure(corner_radius=0)
 
         self.grid_columnconfigure(0, weight=1)
@@ -91,9 +106,14 @@ class SidePanel(CTkFrame):
 
         settingsImage = CTkImage(Image.open("Assets/settings.png"),
                                  size=(23, 23))
-        self.settings = CTkButton(self, text="Настройки", image=settingsImage, text_color=("black", "white"))
-        self.settings.configure(fg_color="transparent", hover_color=("#cfcfcf", "#333"))
+        self.settings = CTkButton(self, text="Настройки", image=settingsImage,
+                                  text_color=("black", "white"),
+                                  fg_color="transparent", hover_color=("#cfcfcf", "#333"),
+                                  command=self.open_settings_window)
         self.settings.grid(padx=10, pady=5, sticky="ew")
+
+    def open_settings_window(self):
+        self.controller.open_toplevel(SettingsToplevelWindow)
 
 
 class SearchBar(CTkFrame):
