@@ -1,4 +1,5 @@
-from Views.SettingsView import *
+from Views.AppendToplevelWindow import *
+from Views.SettingsToplevelWindow import *
 from PIL import Image
 
 
@@ -60,7 +61,7 @@ class MainPage(CTkFrame):
         self.bookButton.grid(row=2, column=0, columnspan=2, pady=10)
 
     def open_append_window(self):
-        self.controller.open_toplevel(SettingsToplevelWindow)
+        self.controller.open_toplevel(AppendToplevelWindow)
 
 
 class TitleLabels(CTkFrame):

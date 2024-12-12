@@ -1,6 +1,5 @@
 import tkinter as tk
 
-from Views.SettingsView import *
 from Views.LoginView import *
 
 
@@ -17,7 +16,7 @@ class BiblioLabaApp(CTk):
         self.container.pack(fill="both", expand=True)
 
         self.current_view = None
-        self.toplevel_window = None
+        self.open_windows = {}
 
         # self.show_view(LoginView)
         self.show_view(ContentView)
@@ -30,10 +29,10 @@ class BiblioLabaApp(CTk):
         self.current_view.pack(fill="both", expand=True)
 
     def open_toplevel(self, topLevel):
-        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = topLevel(self)
+        if topLevel not in self.open_windows or not self.open_windows[topLevel].winfo_exists():
+            self.open_windows[topLevel] = topLevel(self)
         else:
-            self.toplevel_window.focus()
+            self.open_windows[topLevel].focus()
 
     def loop(self):
         self.mainloop()
