@@ -483,3 +483,30 @@ def DecreaseCount(title: str, authorName: str, authorSurName: str, image: str, d
     finally:
         cur.close()
         conn.close()
+
+
+def TakeDataBook():
+    try:
+        conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
+        conn.autocommit = True
+        cur = conn.cursor()
+
+        query = f"""
+        SELECT * FROM book;
+"""
+
+        cur.execute(query)
+        return cur.fetchall()
+
+    except Exception as e:
+        print(f"Произошла ошибка при getting of data элеента: {e}")
+    finally:
+        cur.close()
+        conn.close()
+
+def TakeDataAuthor():
+    pass
+def TakeDataPublishingHouse():
+    pass
+def TakeDataGenre():
+    pass
