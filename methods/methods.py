@@ -505,8 +505,56 @@ def TakeDataBook():
         conn.close()
 
 def TakeDataAuthor():
-    pass
+    try:
+        conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
+        conn.autocommit = True
+        cur = conn.cursor()
+
+        query = f"""
+            SELECT * FROM author;
+    """
+
+        cur.execute(query)
+        return cur.fetchall()
+
+    except Exception as e:
+        print(f"Произошла ошибка при getting of data элеента: {e}")
+    finally:
+        cur.close()
+        conn.close()
 def TakeDataPublishingHouse():
-    pass
+    try:
+        conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
+        conn.autocommit = True
+        cur = conn.cursor()
+
+        query = f"""
+            SELECT * FROM PublishingHouse;
+    """
+
+        cur.execute(query)
+        return cur.fetchall()
+
+    except Exception as e:
+        print(f"Произошла ошибка при getting of data элеента: {e}")
+    finally:
+        cur.close()
+        conn.close()
 def TakeDataGenre():
-    pass
+    try:
+        conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
+        conn.autocommit = True
+        cur = conn.cursor()
+
+        query = f"""
+            SELECT * FROM Genre;
+    """
+
+        cur.execute(query)
+        return cur.fetchall()
+
+    except Exception as e:
+        print(f"Произошла ошибка при getting of data элеента: {e}")
+    finally:
+        cur.close()
+        conn.close()
