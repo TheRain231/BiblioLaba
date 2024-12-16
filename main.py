@@ -1,4 +1,8 @@
 from BiblioLabaApp import *
+from Helpers.dataManager import *
 
-app = BiblioLabaApp()
+dataManager = DataManager()
+dataManager.loadData()
+
+app = BiblioLabaApp(dataManager)
 app.loop()

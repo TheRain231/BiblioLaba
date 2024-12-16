@@ -1,12 +1,14 @@
 import tkinter as tk
 
 from Views.LoginView import *
+from Helpers.dataManager import *
 
-import methods.methods as sql
 
 class BiblioLabaApp(CTk):
-    def __init__(self):
+    def __init__(self, dataManager):
         super().__init__()
+
+        self.dataManager = dataManager
 
         self.title("Библио-Лаба")
         self.geometry("800x600")
@@ -17,10 +19,33 @@ class BiblioLabaApp(CTk):
         self.container.pack(fill="both", expand=True)
 
         self.current_view = None
+        self.main_page = None
+        self.side_panel = None
         self.open_windows = {}
 
         # self.show_view(LoginView)
         self.show_view(ContentView)
+
+    def set_main_page(self, page):
+        self.main_page = page
+
+    def set_side_panel(self, page):
+        self.side_panel = page
+
+    def update_selected_book(self, new_book_id):
+        self.dataManager.selectBook(new_book_id)
+        if self.main_page:
+            self.main_page.update_ui()
+
+    def update_side_panel(self):
+        if self.side_panel:
+            self.side_panel.update_scrollable_checkbox_frame()
+
+    def update_ui(self):
+        if self.main_page:
+            self.main_page.update_ui()
+        if self.side_panel:
+            self.side_panel.update_scrollable_checkbox_frame()
 
     def show_view(self, view_class):
         if self.current_view is not None:
@@ -29,22 +54,19 @@ class BiblioLabaApp(CTk):
         self.current_view = view_class(self.container, self)
         self.current_view.pack(fill="both", expand=True)
 
-    def open_toplevel(self, topLevel):
+    def open_toplevel(self, topLevel, *args, **kwargs):
         if topLevel not in self.open_windows or not self.open_windows[topLevel].winfo_exists():
-            self.open_windows[topLevel] = topLevel(self)
+            self.open_windows[topLevel] = topLevel(*args, **kwargs)
         else:
             self.open_windows[topLevel].focus()
 
+    def close_toplevel(self, topLevel):
+        if topLevel in self.open_windows and self.open_windows[topLevel].winfo_exists():
+            self.open_windows[topLevel].withdraw()
+            del self.open_windows[topLevel]
+        else:
+            print(f"Error: {topLevel} not found in open_windows.")
+            print(self.open_windows)
+
     def loop(self):
-        # sql.CreateDB()
-        # sql.CreateTables()
-        # sql.CreateFuncs()
-        # sql.CreateTriggers()
-        # sql.InsertNewBook("LOL", "artem", "antonov", "hhtp", "qeweqweqeqwe", "lolol", "st.P", "1", "2", 12)
-        # sql.InsertNewBook("LOL", "artem", "antonov", "hhtp", "qeweqweqeqwe", "lolol", "st.P", "1", "2", 12)
-        # sql.DecreaseCount("LOL", "artem", "antonov", "hhtp", "qeweqweqeqwe", "lolol", "st.P", "1", "2", 12)
-        print(sql.TakeDataBook())
-        print(sql.TakeDataGenre())
-        print(sql.TakeDataAuthor())
-        print(sql.TakeDataPublishingHouse())
         self.mainloop()

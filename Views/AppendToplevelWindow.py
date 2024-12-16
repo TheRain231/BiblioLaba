@@ -1,9 +1,13 @@
 from customtkinter import *
+import time
 
 
 class AppendToplevelWindow(CTkToplevel):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, controller, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.controller = controller
+
         self.geometry("400x400")
 
         self.grid_columnconfigure(0, weight=0)
@@ -25,11 +29,23 @@ class AppendToplevelWindow(CTkToplevel):
         self.coverEntry.grid(padx=10, pady=5, columnspan=2, sticky="ew")
         self.descriptionEntry.grid(row=6, padx=10, pady=5, columnspan=2, sticky="nsew")
 
-        self.counter = CTkButton(self, text="Append")
+        self.counter = CTkButton(self, text="Append", command=self.appendButtonAction)
         self.counter.grid(row=7, column=0, padx=10, pady=5, sticky="sw")
 
         self.counter = Counter(self)
         self.counter.grid(row=7, column=1, padx=10, pady=5, sticky="se")
+
+    def appendButtonAction(self):
+        self.controller.dataManager.insertNewBook(title=self.titleEntry.get(),
+                                                  authorName=self.authorEntry.get(),
+                                                  genre=self.genreEntry.get(),
+                                                  publishngHouseLabel=self.publisherEntry.get(),
+                                                  image=self.coverEntry.get(),
+                                                  description=self.descriptionEntry.get(),
+                                                  count=self.counter.getCount())
+        self.controller.update_ui()
+        self.controller.close_toplevel(AppendToplevelWindow)
+
 
 class Counter(CTkFrame):
     def __init__(self, master, *args, **kwargs):
@@ -49,3 +65,6 @@ class Counter(CTkFrame):
 
     def increase(self):
         self.counterLabel.configure(text=str(int(self.counterLabel.cget("text")) + 1))
+
+    def getCount(self):
+        return int(self.counterLabel.cget("text"))

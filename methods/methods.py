@@ -237,7 +237,7 @@ $$ LANGUAGE plpgsql;
             getPublishingHouseId,
             getGenreId,
             getClientId
-                   ]
+        ]
         for query in queries:
             try:
                 cur.execute(query)
@@ -250,7 +250,6 @@ $$ LANGUAGE plpgsql;
     finally:
         cur.close()
         conn.close()
-
 
 
 def CreateTriggers():
@@ -284,7 +283,6 @@ EXECUTE FUNCTION check_and_update_count();
         conn.close()
 
 
-
 def DeleteDB():
     try:
         conn = psycopg2.connect(host=host, port=port, user=user, password=password)
@@ -307,9 +305,8 @@ def DeleteDB():
         conn.close()
 
 
-
-
-def InsertNewBook(title: str, authorName: str, authorSurName: str, image: str, description: str, genre: str, publishngHouseLabel: str, clientLogin:str, clientPassword:str, count: int = 1):
+def InsertNewBook(title: str, authorName: str, authorSurName: str, image: str, description: str, genre: str,
+                  publishngHouseLabel: str, clientLogin: str, clientPassword: str, count: int = 1):
     try:
         conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
 
@@ -329,9 +326,6 @@ def InsertNewBook(title: str, authorName: str, authorSurName: str, image: str, d
             cur.execute(newAuthorId)
             cur.execute(authorId)
             author_id = cur.fetchall()[0][0]
-
-
-
 
         genreId = f"""
         SELECT get_genre_id('{genre}');
@@ -402,8 +396,8 @@ def InsertNewBook(title: str, authorName: str, authorSurName: str, image: str, d
         conn.close()
 
 
-
-def DecreaseCount(title: str, authorName: str, authorSurName: str, image: str, description: str, genre: str, publishngHouseLabel: str, clientLogin:str, clientPassword:str, count: int = 0):
+def DecreaseCount(title: str, authorName: str, authorSurName: str, image: str, description: str, genre: str,
+                  publishngHouseLabel: str, clientLogin: str, clientPassword: str, count: int = 0):
     try:
         conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
         conn.autocommit = True
@@ -504,6 +498,7 @@ def TakeDataBook():
         cur.close()
         conn.close()
 
+
 def TakeDataAuthor():
     try:
         conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
@@ -522,6 +517,8 @@ def TakeDataAuthor():
     finally:
         cur.close()
         conn.close()
+
+
 def TakeDataPublishingHouse():
     try:
         conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
@@ -540,6 +537,8 @@ def TakeDataPublishingHouse():
     finally:
         cur.close()
         conn.close()
+
+
 def TakeDataGenre():
     try:
         conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
