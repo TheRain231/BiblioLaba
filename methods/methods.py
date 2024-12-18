@@ -525,7 +525,23 @@ def TakeDataGenre():
         cur.close()
         conn.close()
 
+def TakeDataClient():
+    try:
+        conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
+        conn.autocommit = True
+        cur = conn.cursor()
 
+        query = f"""
+            SELECT * FROM Client;
+    """
+        cur.execute(query)
+        return cur.fetchall()
+
+    except Exception as e:
+        print(f"Произошла ошибка при getting of data элеента: {e}")
+    finally:
+        cur.close()
+        conn.close()
 def Registration(clientLogin: str, clientPassword: str) -> bool:
     try:
         conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
