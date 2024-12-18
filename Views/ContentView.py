@@ -96,8 +96,9 @@ class MainPage(CTkFrame):
 
     def bookButtonAction(self):
         selected = self.dataManager.booksDictionary[self.dataManager.getSelectedBook()]
-        sql.DecreaseCount(selected.title, selected.author, "", selected.image, selected.description,
+        sql.DecreaseCount(selected.title, selected.author, selected.authorSurname, selected.image, selected.description,
                           selected.genre, selected.publisher, "1", "2", selected.count)
+        self.dataManager.loadData()
         self.countLabel.configure(
             text=f"Количество: {self.dataManager.booksDictionary[self.dataManager.getSelectedBook()].count}")
         print("bron")
