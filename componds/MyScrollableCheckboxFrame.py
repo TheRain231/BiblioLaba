@@ -13,14 +13,9 @@ class MyScrollableCheckboxFrame(CTkScrollableFrame):
         self.checkboxes = []
 
         for i, value in self.values:
-            checkbox = CTkButton(self, text=value, fg_color="#5090d0"
-                                 if i == self.controller.dataManager.selectedBook
-                                 else "grey",
-
-                                 hover_color="#005da8"
-                                 if i == self.controller.dataManager.getSelectedBook()
-                                 else "#666666",
-
+            checkbox = CTkButton(self, text=value,
+                                 fg_color="grey",
+                                 hover_color="#666666",
                                  command=lambda index=i: self.select_book(index))
 
             checkbox.grid(row=i, column=0, padx=10, pady=(10, 0), sticky="ew")
@@ -30,9 +25,21 @@ class MyScrollableCheckboxFrame(CTkScrollableFrame):
         # Обновляем выбранный элемент
         self.controller.update_selected_book(index)
         print(self.controller.dataManager.getSelectedBook())
-        # Перерисовываем кнопки для обновления цветов
-        for btn, (i, value) in zip(self.checkboxes, self.values):
-            btn.configure(
-                fg_color="#5090d0" if i == self.controller.dataManager.getSelectedBook() else "grey",
-                hover_color="#005da8" if i == self.controller.dataManager.getSelectedBook() else "#666666"
-            )
+
+    def update_values(self, values):
+        # Очищаем предыдущие виджеты
+        for widget in self.winfo_children():
+            widget.destroy()
+
+        self.values = values
+        self.checkboxes = []
+
+        # Создаём новые кнопки
+        for i, value in self.values:
+            checkbox = CTkButton(self, text=value,
+                                 fg_color="grey",
+                                 hover_color="#666666",
+                                 command=lambda index=i: self.select_book(index))
+
+            checkbox.grid(row=i, column=0, padx=10, pady=(10, 0), sticky="ew")
+            self.checkboxes.append(checkbox)

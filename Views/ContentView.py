@@ -4,7 +4,6 @@ from PIL import Image
 from componds.CTkUrlLabel import *
 from componds.MyScrollableCheckboxFrame import *
 from threading import Thread
-from Helpers.dataManager import *
 
 
 class ContentView(CTkFrame):
@@ -99,6 +98,7 @@ class MainPage(CTkFrame):
             AppendToplevelWindow, controller=self.controller
         )
 
+
 class TitleLabels(CTkFrame):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
@@ -146,7 +146,8 @@ class SidePanel(CTkFrame):
         self.searchBar = SearchBar(self)
         self.searchBar.grid(row=1, column=0, padx=10, pady=(10, 0), sticky="nsew")
 
-        values = [(book, self.controller.dataManager.booksDictionary[book].title) for book in self.controller.dataManager.booksDictionary.keys()]
+        values = [(book, self.controller.dataManager.booksDictionary[book].title) for book in
+                  self.controller.dataManager.booksDictionary.keys()]
         self.scrollable_checkbox_frame = MyScrollableCheckboxFrame(self, controller, values=values)
         self.scrollable_checkbox_frame.grid(row=2, column=0, padx=10, pady=(10, 0), sticky="nsew")
 
@@ -161,17 +162,15 @@ class SidePanel(CTkFrame):
         self.controller.open_toplevel(
             SettingsToplevelWindow, controller=self.controller
         )
+
     def update_scrollable_checkbox_frame(self):
         # Обновляем значения
         values = filter(lambda x: self.controller.dataManager.booksDictionary[x[0]].count != 0,
-                        [(book, self.controller.dataManager.booksDictionary[book].title) for book in self.controller.dataManager.booksDictionary.keys()])
+                        [(book, self.controller.dataManager.booksDictionary[book].title)
+                         for book in self.controller.dataManager.booksDictionary.keys()])
 
-        # Удаляем старый фрейм, чтобы не было дублирования
-        self.scrollable_checkbox_frame.destroy()
-
-        # Создаем новый фрейм с обновленными значениями
-        self.scrollable_checkbox_frame = MyScrollableCheckboxFrame(self, self.controller, values=values)
-        self.scrollable_checkbox_frame.grid(row=2, column=0, padx=10, pady=(10, 0), sticky="nsew")
+        # Обновляем значения внутри существующего фрейма
+        self.scrollable_checkbox_frame.update_values(values)
 
 
 class SearchBar(CTkFrame):

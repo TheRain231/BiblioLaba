@@ -13,20 +13,17 @@ class SettingsToplevelWindow(CTkToplevel):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(2, weight=1)
         self.grid_rowconfigure(0, weight=1)
-        self.grid_rowconfigure(3, weight=1)
+        self.grid_rowconfigure(4, weight=1)
 
         self.dropButton = CTkButton(self, text="Drop Database", command=self.dropButtonAction)
         self.dropButton.grid(row=1, column=1, sticky="nsew")
 
-        self.updateButton = CTkButton(self, text="Update UI", command=self.updateButton)
-        self.updateButton.grid(row=2, column=1, pady=10, sticky="nsew")
+        self.updateButton = CTkButton(self, text="Update UI", command=self.updateButtonAction)
+        self.updateButton.grid(row=3, column=1, pady=10, sticky="nsew")
 
-    def updateButton(self):
+    def updateButtonAction(self):
         self.controller.update_ui()
 
     def dropButtonAction(self):
-        # selected = booksDictionary[selectedBook]
-        # sql.DecreaseCount(selected.title, selected.author, selected.author, selected.image, selected.description, selected.genre, selected.publisher, "1", "2", selected.count)
-        # self.controller.update_selected_book(booksDictionary.keys()[0])
         sql.DeleteDB()
         self.controller.update_side_panel()
