@@ -94,14 +94,23 @@ class MainPage(CTkFrame):
 
             self.countLabel.configure(text=f"Количество: {selected_book.count}")
 
+            if selected_book.count > 0:
+                self.bookButton.configure(fg_color="#3669a1")
+                self.bookButton.configure(hover_color="#12f")
+            else:
+                self.bookButton.configure(fg_color="gray")
+                self.bookButton.configure(hover_color="#666")
+
     def bookButtonAction(self):
         selected = self.dataManager.booksDictionary[self.dataManager.getSelectedBook()]
         sql.DecreaseCount(selected.title, selected.author, selected.authorSurname, selected.image, selected.description,
                           selected.genre, selected.publisher, "1", "2", selected.count)
         self.dataManager.loadData()
+        count = self.dataManager.booksDictionary[self.dataManager.getSelectedBook()].count
+        if count <= 0:
+            self.bookButton.configure(fg_color="gray")
         self.countLabel.configure(
-            text=f"Количество: {self.dataManager.booksDictionary[self.dataManager.getSelectedBook()].count}")
-        print("bron")
+            text=f"Количество: {count}")
 
     def open_append_window(self):
         self.controller.open_toplevel(
