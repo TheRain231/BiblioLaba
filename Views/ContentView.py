@@ -131,7 +131,7 @@ class TitleLabels(CTkFrame):
     def update_labels(self, book):
         """Обновляет текст метаданных книги."""
         self.title.configure(text=book.title)
-        self.author.configure(text=book.author)
+        self.author.configure(text=book.author + " " + book.authorSurname)
         self.genre.configure(text=book.genre)
         self.publisher.configure(text=book.publisher)
 
