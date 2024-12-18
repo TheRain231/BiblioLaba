@@ -407,14 +407,6 @@ def DecreaseCount(title: str, authorName: str, authorSurName: str, image: str, d
         """
         cur.execute(authorId)
         author_id = cur.fetchall()[0][0]
-        if (author_id == -1):
-            newAuthorId = f"""
-                    INSERT INTO author(name, surname)
-                    VALUES('{authorName}', '{authorSurName}');
-        """
-            cur.execute(newAuthorId)
-            cur.execute(authorId)
-            author_id = cur.fetchall()[0][0]
 
         genreId = f"""
                 SELECT get_genre_id('{genre}');
@@ -423,28 +415,11 @@ def DecreaseCount(title: str, authorName: str, authorSurName: str, image: str, d
         cur.execute(genreId)
         genre_id = cur.fetchall()[0][0]
 
-        if (genre_id == -1):
-            newGenreId = f"""
-                            INSERT INTO Genre(genre)
-                            VALUES('{genre}');
-                """
-            cur.execute(newGenreId)
-            cur.execute(genreId)
-            genre_id = cur.fetchall()[0][0]
-
         publishngHouseId = f"""
                 SELECT get_publishing_house_id('{publishngHouseLabel}');
         """
         cur.execute(publishngHouseId)
         publishngHouse_id = cur.fetchall()[0][0]
-        if (publishngHouse_id == -1):
-            newPublishngHouseId = f"""
-                            INSERT INTO publishinghouse(label)
-                            VALUES('{publishngHouseLabel}');
-                """
-            cur.execute(newPublishngHouseId)
-            cur.execute(publishngHouseId)
-            publishngHouse_id = cur.fetchall()[0][0]
 
         clientId = f"""
                 SELECT get_client_id('{clientLogin}');
@@ -452,14 +427,6 @@ def DecreaseCount(title: str, authorName: str, authorSurName: str, image: str, d
         cur.execute(clientId)
         client_id = cur.fetchall()[0][0]
 
-        if (client_id == -1):
-            newClientId = f"""
-                            INSERT INTO client(login, password)
-                            VALUES('{clientLogin}', '{clientPassword}');
-                """
-            cur.execute(newClientId)
-            cur.execute(clientId)
-            client_id = cur.fetchall()[0][0]
 
         query = f"""
         SELECT book_id from Book where author_id = '{author_id}' AND publishing_house_id = '{publishngHouse_id}' AND title = '{title}' AND genre_id = '{genre_id}' AND client_id = '{client_id}' AND description = '{description}';
@@ -557,3 +524,22 @@ def TakeDataGenre():
     finally:
         cur.close()
         conn.close()
+
+
+def Registration(clientLogin: str, clientPassword: str):
+    try:
+        conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
+        conn.autocommit = True
+        cur = conn.cursor()
+
+        query = f"""
+                            INSERT INTO client(login, password)
+                            VALUES('{clientLogin}', '{clientPassword}');
+"""
+        cur.execute(query)
+    except Exception as e:
+        print(f"Произошла ошибка при Registration элеента: {e}")
+    finally:
+        cur.close()
+        conn.close()
+
