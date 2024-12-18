@@ -526,17 +526,26 @@ def TakeDataGenre():
         conn.close()
 
 
-def Registration(clientLogin: str, clientPassword: str):
+def Registration(clientLogin: str, clientPassword: str) -> bool:
     try:
         conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
         conn.autocommit = True
         cur = conn.cursor()
+        clientId = f"""
+                       SELECT get_client_id('{clientLogin}');
+               """
+        cur.execute(clientId)
+        client_id = cur.fetchall()[0][0]
+        if client_id == -1:
+            return False
+        else:
+            query = f"""
+                                            INSERT INTO client(login, password)
+                                            VALUES('{clientLogin}', '{clientPassword}');
+                """
+            cur.execute(query)
+            return True
 
-        query = f"""
-                            INSERT INTO client(login, password)
-                            VALUES('{clientLogin}', '{clientPassword}');
-"""
-        cur.execute(query)
     except Exception as e:
         print(f"Произошла ошибка при Registration элеента: {e}")
     finally:
