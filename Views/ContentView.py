@@ -5,6 +5,8 @@ from componds.CTkUrlLabel import *
 from componds.MyScrollableCheckboxFrame import *
 from threading import Thread
 
+from tkinter import messagebox
+
 
 class ContentView(CTkFrame):
     def __init__(self, master, controller, dataManager, *args, **kwargs):
@@ -105,6 +107,8 @@ class MainPage(CTkFrame):
         selected = self.dataManager.booksDictionary[self.dataManager.getSelectedBook()]
         sql.DecreaseCount(selected.title, selected.author, selected.authorSurname, selected.image, selected.description,
                           selected.genre, selected.publisher, "1", "2", selected.count)
+        messagebox.showerror("Успех", "Книга " + selected.title + " забронирована")
+
         self.dataManager.loadData()
         count = self.dataManager.booksDictionary[self.dataManager.getSelectedBook()].count
         if count <= 0:

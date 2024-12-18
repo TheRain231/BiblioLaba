@@ -1,6 +1,5 @@
 from customtkinter import *
-import time
-
+from tkinter import messagebox
 
 class AppendToplevelWindow(CTkToplevel):
     def __init__(self, controller, *args, **kwargs):
@@ -38,16 +37,23 @@ class AppendToplevelWindow(CTkToplevel):
         self.counter.grid(row=9, column=1, padx=10, pady=5, sticky="se")
 
     def appendButtonAction(self):
-        self.controller.dataManager.insertNewBook(title=self.titleEntry.get(),
-                                                  authorName=self.authorEntry.get(),
-                                                  authorSurName=self.authorSurnameEntry.get(),
-                                                  genre=self.genreEntry.get(),
-                                                  publishngHouseLabel=self.publisherEntry.get(),
-                                                  image=self.coverEntry.get(),
-                                                  description=self.descriptionEntry.get(),
-                                                  count=self.counter.getCount())
-        self.controller.update_ui()
-        self.controller.close_toplevel(AppendToplevelWindow)
+        if (self.titleEntry.get() == "" or
+           self.authorEntry.get() == "" or
+           self.genreEntry.get() == "" or
+           self.publisherEntry.get() == "" or
+           self.descriptionEntry.get() == ""):
+            messagebox.showerror("Ошибка", "Пропущено поле")
+        else:
+            self.controller.dataManager.insertNewBook(title=self.titleEntry.get(),
+                                                      authorName=self.authorEntry.get(),
+                                                      authorSurName=self.authorSurnameEntry.get(),
+                                                      genre=self.genreEntry.get(),
+                                                      publishngHouseLabel=self.publisherEntry.get(),
+                                                      image=self.coverEntry.get(),
+                                                      description=self.descriptionEntry.get(),
+                                                      count=self.counter.getCount())
+            self.controller.update_ui()
+            self.controller.close_toplevel(AppendToplevelWindow)
 
 
 class Counter(CTkFrame):

@@ -98,7 +98,6 @@ class LoginEntries(CTkFrame):
 
 
 def validate(word):
-    # Проверяем длину логина
     if len(word) < 1 or len(word) > 20:
         return False
     # Проверяем, состоит ли логин только из букв и цифр
