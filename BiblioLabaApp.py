@@ -23,8 +23,8 @@ class BiblioLabaApp(CTk):
         self.side_panel = None
         self.open_windows = {}
 
-        # self.show_view(LoginView)
-        self.show_view(ContentView)
+        # self.show_view(LoginView, controller=self, dataManager=self.dataManager)
+        self.show_view(ContentView, controller=self, dataManager=self.dataManager)
 
     def set_main_page(self, page):
         self.main_page = page
@@ -47,11 +47,11 @@ class BiblioLabaApp(CTk):
         if self.side_panel:
             self.side_panel.update_scrollable_checkbox_frame()
 
-    def show_view(self, view_class):
+    def show_view(self, view_class, *args, **kwargs):
         if self.current_view is not None:
             self.current_view.destroy()
 
-        self.current_view = view_class(self.container, self)
+        self.current_view = view_class(self.container, self, dataManager=self.dataManager)
         self.current_view.pack(fill="both", expand=True)
 
     def open_toplevel(self, topLevel, *args, **kwargs):

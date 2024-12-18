@@ -7,7 +7,7 @@ from threading import Thread
 
 
 class ContentView(CTkFrame):
-    def __init__(self, master, controller, *args, **kwargs):
+    def __init__(self, master, controller, dataManager, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
         self.controller = controller
@@ -18,17 +18,18 @@ class ContentView(CTkFrame):
         self.grid_columnconfigure(1, weight=30)
         self.grid_rowconfigure(0, weight=1)
 
-        self.sidePanel = SidePanel(self, controller)
+        self.sidePanel = SidePanel(self, controller, dataManager)
         self.sidePanel.grid(row=0, column=0, sticky="nsew")
 
-        self.mainPage = MainPage(self, controller)
+        self.mainPage = MainPage(self, controller, dataManager)
         self.mainPage.grid(row=0, column=1, sticky="nsew")
 
 
 class MainPage(CTkFrame):
-    def __init__(self, master, controller, *args, **kwargs):
+    def __init__(self, master, controller, dataManager, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
+        self.dataManager = dataManager
         self.controller = controller
         self.configure(fg_color="transparent")
 
@@ -61,7 +62,7 @@ class MainPage(CTkFrame):
         self.description.grid(row=1, column=0, columnspan=2, padx=25, pady=0, sticky="nw")
 
         # Кнопка бронирования
-        self.bookButton = CTkButton(master=self, text="Забронировать")
+        self.bookButton = CTkButton(master=self, text="Забронировать", command=self.bookButtonAction)
         self.bookButton.grid(row=2, column=0, columnspan=2, pady=10)
 
         self.countLabel = CTkLabel(master=self, text="Количество: 0")
@@ -92,6 +93,14 @@ class MainPage(CTkFrame):
             self.description.configure(text=selected_book.description)
 
             self.countLabel.configure(text=f"Количество: {selected_book.count}")
+
+    def bookButtonAction(self):
+        selected = self.dataManager.booksDictionary[self.dataManager.getSelectedBook()]
+        sql.DecreaseCount(selected.title, selected.author, "", selected.image, selected.description,
+                          selected.genre, selected.publisher, "1", "2", selected.count)
+        self.countLabel.configure(
+            text=f"Количество: {self.dataManager.booksDictionary[self.dataManager.getSelectedBook()].count}")
+        print("bron")
 
     def open_append_window(self):
         self.controller.open_toplevel(
@@ -128,11 +137,13 @@ class TitleLabels(CTkFrame):
 
 
 class SidePanel(CTkFrame):
-    def __init__(self, master, controller, **kwargs):
+    def __init__(self, master, controller, dataManager, **kwargs):
         super().__init__(master, **kwargs)
 
         self.controller = controller
         self.controller.set_side_panel(self)
+
+        self.dataManager = dataManager
 
         self.configure(corner_radius=0)
 
@@ -143,7 +154,7 @@ class SidePanel(CTkFrame):
         self.title = CTkLabel(self, text="Библио-лаба", font=("MarkerFelt-Thin", 25))
         self.title.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="new")
 
-        self.searchBar = SearchBar(self)
+        self.searchBar = SearchBar(self, controller)
         self.searchBar.grid(row=1, column=0, padx=10, pady=(10, 0), sticky="nsew")
 
         values = [(book, self.controller.dataManager.booksDictionary[book].title) for book in
@@ -160,11 +171,12 @@ class SidePanel(CTkFrame):
 
     def open_settings_window(self):
         self.controller.open_toplevel(
-            SettingsToplevelWindow, controller=self.controller
+            SettingsToplevelWindow, controller=self.controller, dataManager=self.dataManager
         )
 
     def update_scrollable_checkbox_frame(self):
         # Обновляем значения
+        self.searchBar.searchEntry.configure(placeholder_text="Поиск")
         values = filter(lambda x: self.controller.dataManager.booksDictionary[x[0]].count != 0,
                         [(book, self.controller.dataManager.booksDictionary[book].title)
                          for book in self.controller.dataManager.booksDictionary.keys()])
@@ -174,8 +186,10 @@ class SidePanel(CTkFrame):
 
 
 class SearchBar(CTkFrame):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, controller, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+
+        self.controller = controller
 
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=1)
@@ -192,4 +206,11 @@ class SearchBar(CTkFrame):
         self.searchEntry.bind('<Return>', self.searchBooks)
 
     def searchBooks(self, event=None):
-        print(f"i probably should search smth like \"{self.searchEntry.get()}\"")
+        search = self.searchEntry.get()
+        values = filter(lambda x: self.controller.dataManager.booksDictionary[x[0]].count != 0 and
+                        search.capitalize() in self.controller.dataManager.booksDictionary[x[0]].title.capitalize(),
+                        [(book, self.controller.dataManager.booksDictionary[book].title)
+                         for book in self.controller.dataManager.booksDictionary.keys()])
+
+        # Обновляем значения внутри существующего фрейма
+        self.master.scrollable_checkbox_frame.update_values(values)

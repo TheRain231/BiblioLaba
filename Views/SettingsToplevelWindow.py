@@ -3,9 +3,10 @@ from Helpers.dataManager import *
 
 
 class SettingsToplevelWindow(CTkToplevel):
-    def __init__(self, controller, *args, **kwargs):
+    def __init__(self, controller, dataManager, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.dataManager = dataManager
         self.controller = controller
 
         self.geometry("400x300")
@@ -22,8 +23,11 @@ class SettingsToplevelWindow(CTkToplevel):
         self.updateButton.grid(row=3, column=1, pady=10, sticky="nsew")
 
     def updateButtonAction(self):
+        self.dataManager.loadData()
         self.controller.update_ui()
 
     def dropButtonAction(self):
         sql.DeleteDB()
-        self.controller.update_side_panel()
+        self.dataManager.createTable()
+        self.dataManager.loadData()
+        self.controller.update_ui()

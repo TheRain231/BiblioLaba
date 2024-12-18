@@ -14,14 +14,10 @@ class Book:
 
 class DataManager:
     def __init__(self):
-        sql.CreateDB()
-        sql.CreateTables()
-        sql.CreateFuncs()
-        sql.CreateTriggers()
-
         self.booksDictionary: dict[int, Book] = {}
-
         self.selectedBook = 1
+
+        self.createTable()
 
     def getSelectedBook(self) -> int:
         return self.selectedBook
@@ -35,6 +31,12 @@ class DataManager:
         sql.InsertNewBook(title, authorName, authorSurName, image, description, genre, publishngHouseLabel, clientLogin,
                           clientPassword, count)
         self.loadData()
+
+    def createTable(self):
+        sql.CreateDB()
+        sql.CreateTables()
+        sql.CreateFuncs()
+        sql.CreateTriggers()
 
     def loadData(self):
         genreDictionary = {}
