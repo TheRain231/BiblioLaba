@@ -537,14 +537,14 @@ def Registration(clientLogin: str, clientPassword: str) -> bool:
         cur.execute(clientId)
         client_id = cur.fetchall()[0][0]
         if client_id == -1:
-            return False
-        else:
             query = f"""
-                                            INSERT INTO client(login, password)
-                                            VALUES('{clientLogin}', '{clientPassword}');
-                """
+                                                        INSERT INTO client(login, password)
+                                                        VALUES('{clientLogin}', '{clientPassword}');
+                            """
             cur.execute(query)
             return True
+        else:
+            return False
 
     except Exception as e:
         print(f"Произошла ошибка при Registration элеента: {e}")
