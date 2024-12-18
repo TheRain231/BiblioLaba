@@ -5,6 +5,7 @@ class Book:
     id = 0
     title = ""
     author = ""
+    authorSurname = ""
     genre = ""
     publisher = ""
     description = ""
@@ -51,18 +52,19 @@ class DataManager:
         for genre in genreData:
             genreDictionary[genre[0]] = genre[1]
         for author in authorData:
-            authorDictionary[author[0]] = ' '.join(author[1:])
+            authorDictionary[author[0]] = author[1:]
         for publisher in publisherData:
             publisherDictionary[publisher[0]] = publisher[1]
 
         for book in booksData:
+            print(book)
             bookT = Book()
             bookT.title = book[1]
             bookT.image = book[2]
             bookT.description = book[3]
             bookT.count = book[8]
 
-            bookT.author = authorDictionary[book[4]]
+            bookT.author, bookT.authorSurname = authorDictionary[book[4]]
             bookT.genre = genreDictionary[book[5]]
             bookT.publisher = publisherDictionary[book[6]]
 
