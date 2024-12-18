@@ -18,6 +18,9 @@ class DataManager:
         self.booksDictionary: dict[int, Book] = {}
         self.selectedBook = 1
 
+        self.login = ""
+        self.password = ""
+
         self.createTable()
 
     def getSelectedBook(self) -> int:
@@ -27,10 +30,10 @@ class DataManager:
         self.selectedBook = value
 
     def insertNewBook(self, title: str, authorName: str, image: str, description: str, genre: str,
-                      publishngHouseLabel: str, clientLogin: str = "1", clientPassword: str = "2",
+                      publishngHouseLabel: str,
                       count: int = 1, authorSurName: str = ""):
-        sql.InsertNewBook(title, authorName, authorSurName, image, description, genre, publishngHouseLabel, clientLogin,
-                          clientPassword, count)
+        sql.InsertNewBook(title, authorName, authorSurName, image, description, genre, publishngHouseLabel, self.login,
+                          self.password, count)
         self.loadData()
 
     def createTable(self):

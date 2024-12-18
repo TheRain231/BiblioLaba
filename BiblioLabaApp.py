@@ -23,8 +23,8 @@ class BiblioLabaApp(CTk):
         self.side_panel = None
         self.open_windows = {}
 
-        # self.show_view(LoginView, controller=self, dataManager=self.dataManager)
-        self.show_view(ContentView, controller=self, dataManager=self.dataManager)
+        self.show_view(LoginView, controller=self, dataManager=self.dataManager)
+        # self.show_view(ContentView, controller=self, dataManager=self.dataManager)
 
     def set_main_page(self, page):
         self.main_page = page
