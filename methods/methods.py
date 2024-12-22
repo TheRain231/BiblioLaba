@@ -4,14 +4,14 @@ from methods.config import host, new_db_name, password, port, user
 
 def CreateDB():
     try:
-        conn = psycopg2.connect(host=host, port=port, user=user, password=password)
+        conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
         conn.autocommit = True
         # Создание курсора для выполнения запросов
         cur = conn.cursor()
 
         # Запрос на создание новой базы данных
         db_name = new_db_name
-        create_db_query = f"CREATE DATABASE {db_name};"
+        create_db_query = f"call createtables();"
 
         # Выполнение запроса
         cur.execute(create_db_query)
@@ -285,14 +285,14 @@ EXECUTE FUNCTION check_and_update_count();
 
 def DeleteDB():
     try:
-        conn = psycopg2.connect(host=host, port=port, user=user, password=password)
+        conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=new_db_name)
 
         # Создание курсора для выполнения запросов
         cur = conn.cursor()
         conn.autocommit = True
         # Запрос на создание новой базы данных
         db_name = new_db_name
-        delete_db_query = f"DROP DATABASE {db_name};"
+        delete_db_query = f"call drop_all_tables();"
 
         # Выполнение запроса
         cur.execute(delete_db_query)

@@ -38,9 +38,9 @@ class DataManager:
 
     def createTable(self):
         sql.CreateDB()
-        sql.CreateTables()
-        sql.CreateFuncs()
-        sql.CreateTriggers()
+        # sql.CreateTables()
+        # sql.CreateFuncs()
+        # sql.CreateTriggers()
 
     def loadData(self):
         genreDictionary = {}
